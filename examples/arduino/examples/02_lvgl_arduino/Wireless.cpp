@@ -32,18 +32,11 @@ int wifi_scan_number()
 int ble_scan_number()
 {
   printf("/**********BLE Test**********/\r\n"); 
-  BLEDevice::init("ESP32");
-  BLEScan* pBLEScan = BLEDevice::getScan();
-  pBLEScan->setActiveScan(true);
-
-  int count = 0;
-#if ((ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(5,0,0)) && defined(CONFIG_SENSORLIB_ESP_IDF_NEW_API))       // * Using the new API of esp-idf 5.x
-  BLEScanResults foundDevices = pBLEScan->start(5);  
-  count = foundDevices.getCount(); 
-#else //ESP 4.X
-  BLEScanResults *foundDevices = pBLEScan->start(5);  
-  count = foundDevices->getCount();
-#endif //ESP 5.X
+  BLE.begin("ESP32");
+  BLEScan scan = BLE.getScan();
+  scan.setActiveScan(true);
+  BLEScan::Results foundDevices = scan.startBlocking(5000);
+  int count = static_cast<int>(foundDevices.size());
   if (count == 0)
   {
     printf("No Bluetooth device was scanned\r\n");
@@ -51,9 +44,9 @@ int ble_scan_number()
   else{
     printf("Scanned %d Bluetooth devices\r\n",count);
   }
-  pBLEScan->stop(); 
-  pBLEScan->clearResults(); 
-  BLEDevice::deinit(true); 
+  scan.stop();
+  scan.clearResults();
+  BLE.end(true);
   vTaskDelay(100);         
   printf("/**********BLE Test Over**********/\r\n\r\n");
   return count;
