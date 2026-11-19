@@ -7,7 +7,14 @@
 
 #include <stdbool.h>
 #include "esp_err.h"
+#include "esp_idf_version.h"
 #include "esp_lcd_types.h"
+
+#if ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(6, 0, 0)
+typedef lcd_rgb_element_order_t lcd_color_rgb_endian_t;
+#define LCD_RGB_ENDIAN_RGB LCD_RGB_ELEMENT_ORDER_RGB
+#define LCD_RGB_ENDIAN_BGR LCD_RGB_ELEMENT_ORDER_BGR
+#endif
 
 #ifdef __cplusplus
 extern "C" {
